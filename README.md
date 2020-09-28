@@ -17,3 +17,21 @@ There will be an `app` you can install soon too...
 ## Commands
 
 See the [jx-scm command reference](docs/cmd/jx-scm.md#see-also)
+
+
+## Developing
+
+If you wish to work on a local clone of [go-scm](https://github.com/jenkins-x/go-scm) then:
+
+```bash                  
+git clone https://github.com/jenkins-x/go-scm
+```                                          
+
+Then in the local `go.mod` file add the following at the end:
+
+
+``` 
+replace github.com/jenkins-x/go-scm  => PathToTheAboveGitClone
+```                                                           
+
+You can now build this repository using your local modifications and try the locally built binary in `build/jx-scm` or run the unit tests via `make test`
