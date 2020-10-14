@@ -48,6 +48,7 @@ func (o *Options) Validate() (*scm.Client, error) {
 	if o.Kind == "" {
 		return nil, options.MissingOption("kind")
 	}
+
 	if o.Server == "" {
 		return nil, options.MissingOption("server")
 	}
