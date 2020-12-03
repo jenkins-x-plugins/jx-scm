@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/release"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/repository"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/version"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/rootcmd"
@@ -21,6 +22,7 @@ func Main() *cobra.Command {
 			}
 		},
 	}
+	cmd.AddCommand(release.NewCmdRelease())
 	cmd.AddCommand(repository.NewCmdRepository())
 
 	cmd.AddCommand(cobras.SplitCommand(version.NewCmdVersion()))
