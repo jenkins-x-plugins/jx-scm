@@ -1,5 +1,5 @@
-FROM gcr.io/jenkinsxio/jx-cli-base:latest
+FROM gcr.io/jenkinsxio/jx-boot:3.0.759
 
-ENTRYPOINT ["jx-scm"]
-
+RUN apk --no-cache add sed
+    
 COPY ./build/linux/jx-scm /usr/bin/jx-scm

@@ -12,10 +12,11 @@ import (
 
 // Options common CLI arguments for working with a git server
 type Options struct {
-	Kind     string
-	Server   string
-	Username string
-	Token    string
+	Kind      string
+	Server    string
+	Username  string
+	Token     string
+	ScmClient *scm.Client
 }
 
 func (o *Options) AddFlags(cmd *cobra.Command) {
@@ -38,18 +39,21 @@ func (o *Options) Validate() (*scm.Client, error) {
 		return nil, options.MissingOption("token")
 	}
 
-	client, err := factory.NewClient(o.Kind, o.Server, o.Token)
-	if err != nil {
-		return client, errors.Wrapf(err, "failed to create ScmClient for kind %s server %s", o.Kind, o.Server)
+	var err error
+	if o.ScmClient == nil {
+		o.ScmClient, err = factory.NewClient(o.Kind, o.Server, o.Token)
+		if err != nil {
+			return o.ScmClient, errors.Wrapf(err, "failed to create ScmClient for kind %s server %s", o.Kind, o.Server)
+		}
 	}
 
 	ctx := context.Background()
 	if o.Username == "" {
-		user, _, err := client.Users.Find(ctx)
+		user, _, err := o.ScmClient.Users.Find(ctx)
 		if err != nil {
-			return client, errors.Wrapf(err, "failed to find current user")
+			return o.ScmClient, errors.Wrapf(err, "failed to find current user")
 		}
 		o.Username = user.Login
 	}
-	return client, nil
+	return o.ScmClient, nil
 }
