@@ -83,10 +83,10 @@ spec:
             #!/bin/bash
             source .jx/variables.sh
             make goreleaser
-        - command:
-          - jx-updatebot
-          - pr
-          image: gcr.io/jenkinsxio/jx-updatebot:latest
-          name: promote-release
+#         - command:
+#           - jx-updatebot
+#           - pr
+#           image: gcr.io/jenkinsxio/jx-updatebot:latest
+#           name: promote-release
   serviceAccountName: tekton-bot
   timeout: 240h0m0s
