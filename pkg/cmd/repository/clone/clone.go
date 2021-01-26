@@ -46,7 +46,7 @@ func NewCmdCloneRepository() (*cobra.Command, *Options) {
 		Use:     "clone",
 		Short:   "Clones a git repository",
 		Long:    cmdLong,
-		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
+		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName),
 		Run: func(cmd *cobra.Command, args []string) {
 			o.Args = args
 			err := o.Run()
