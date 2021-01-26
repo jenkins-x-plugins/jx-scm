@@ -2,6 +2,10 @@ package scmclient
 
 import (
 	"context"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+	"os"
 
 	"github.com/jenkins-x/go-scm/scm"
 	"github.com/jenkins-x/go-scm/scm/factory"
@@ -12,11 +16,13 @@ import (
 
 // Options common CLI arguments for working with a git server
 type Options struct {
-	Kind      string
-	Server    string
-	Username  string
-	Token     string
-	ScmClient *scm.Client
+	Kind             string
+	Server           string
+	Username         string
+	Token            string
+	ScmClient        *scm.Client
+	GitClient        gitclient.Interface
+	GitCommandRunner cmdrunner.CommandRunner
 }
 
 func (o *Options) AddFlags(cmd *cobra.Command) {
@@ -29,6 +35,16 @@ func (o *Options) AddFlags(cmd *cobra.Command) {
 
 // Validate validates the options and returns the ScmClient
 func (o *Options) Validate() (*scm.Client, error) {
+	if o.Kind == "" {
+		o.Kind = os.Getenv("GIT_KIND")
+	}
+	if o.Username == "" {
+		o.Username = os.Getenv("GIT_USERNAME")
+	}
+	if o.Token == "" {
+		o.Token = os.Getenv("GIT_TOKEN")
+	}
+
 	if o.Kind == "" {
 		return nil, options.MissingOption("kind")
 	}
@@ -54,6 +70,13 @@ func (o *Options) Validate() (*scm.Client, error) {
 			return o.ScmClient, errors.Wrapf(err, "failed to find current user")
 		}
 		o.Username = user.Login
+	}
+
+	if o.GitCommandRunner == nil {
+		o.GitCommandRunner = cmdrunner.QuietCommandRunner
+	}
+	if o.GitClient == nil {
+		o.GitClient = cli.NewCLIClient("", o.GitCommandRunner)
 	}
 	return o.ScmClient, nil
 }

@@ -23,3 +23,17 @@ func TestCreateRepository(t *testing.T) {
 
 	t.Logf("created repository %s", o.Repository.Link)
 }
+
+func TestCreateRepositoryFromURL(t *testing.T) {
+	_, o := create.NewCmdCreateRepository()
+
+	o.Args = []string{"https://github.com/myowner/myrepo"}
+	o.Kind = "fake"
+	o.Token = "dummytoken"
+
+	err := o.Run()
+	require.NoError(t, err, "failed to create the repository")
+	require.NotNil(t, o.Repository, "should have made a Repository")
+
+	t.Logf("created repository %s", o.Repository.Link)
+}
