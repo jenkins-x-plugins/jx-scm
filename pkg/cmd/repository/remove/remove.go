@@ -29,6 +29,12 @@ var (
 	cmdExample = templates.Examples(`
 		# removes all the repositories in the owner with the given filter
 		%s repository remove --owner myuser -f mything
+
+		# removes all the repositories in the owner created before the given time
+		%s repository remove --owner myuser --created-before '02 Jan 06 15:04 MST'
+
+		# removes all the repositories in the owner created 30 days ago
+		%s repository remove --owner myuser --created-days-ago 30  --confirm
 	`)
 
 	info = termcolor.ColorInfo
@@ -43,8 +49,10 @@ type Options struct {
 	Includes          []string
 	Excludes          []string
 	CreatedBefore     string
+	CreatedDaysAgo    int
 	Confirm           bool
 	DryRun            bool
+	FailOnRemoveError bool
 	Input             input.Interface
 	CreatedBeforeTime *time.Time
 }
@@ -58,7 +66,7 @@ func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 		Short:   "Removes one or more repositories",
 		Aliases: []string{"delete", "rm"},
 		Long:    cmdLong,
-		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
+		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName, rootcmd.BinaryName),
 		Run: func(cmd *cobra.Command, args []string) {
 			err := o.Run()
 			helper.CheckErr(err)
@@ -69,10 +77,12 @@ func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username")
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "the name of the repository to create")
 	cmd.Flags().StringVarP(&o.CreatedBefore, "created-before", "", "", "the time expression for removing repositories created before this time")
+	cmd.Flags().IntVarP(&o.CreatedDaysAgo, "created-days-ago", "", 0, "remove repositories created more than this number of days ago")
 	cmd.Flags().StringArrayVarP(&o.Includes, "filter", "f", nil, "the text filter to match the name")
 	cmd.Flags().StringArrayVarP(&o.Excludes, "exclude", "x", nil, "the text filter to exclude")
 	cmd.Flags().BoolVarP(&o.Confirm, "confirm", "", false, "confirms the removal without prompting the user")
 	cmd.Flags().BoolVarP(&o.DryRun, "dry-run", "", false, "disables actually deleting the repository so you can test the filtering")
+	cmd.Flags().BoolVarP(&o.FailOnRemoveError, "fail-on-error", "", false, "stops removing repositories if a remove failsg")
 	return cmd, o
 }
 
@@ -92,6 +102,16 @@ func (o *Options) Validate() (*scm.Client, error) {
 
 	if o.Input == nil {
 		o.Input = survey.NewInput()
+	}
+
+	if o.CreatedDaysAgo > 0 {
+		if o.CreatedBefore != "" {
+			return nil, errors.Errorf("you cannot supply --created-before and --created-days-ago")
+		}
+
+		hours := time.Duration(-24 * o.CreatedDaysAgo)
+		t := time.Now().Add(hours * time.Hour)
+		o.CreatedBeforeTime = &t
 	}
 
 	if o.CreatedBefore != "" {
@@ -174,9 +194,16 @@ func (o *Options) Run() error {
 			resp, err = scmClient.Repositories.Delete(ctx, name)
 			if err != nil {
 				if resp == nil {
-					return errors.Wrapf(err, "failed to delete repository %s no status", name)
+					if o.FailOnRemoveError {
+						return errors.Wrapf(err, "failed to delete repository %s no status", name)
+					}
+					log.Logger().Warnf("failed to delete repository %s no status", name)
+				} else {
+					if o.FailOnRemoveError {
+						return errors.Wrapf(err, "failed to delete repository %s status %d", name, resp.Status)
+					}
+					log.Logger().Warnf("failed to delete repository %s status %d", name, resp.Status)
 				}
-				return errors.Wrapf(err, "failed to delete repository %s status %d", name, resp.Status)
 			}
 			log.Logger().Infof("removed repository %s", info(name))
 		}
