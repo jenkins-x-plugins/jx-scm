@@ -46,6 +46,7 @@ type Options struct {
 	Description string
 	HomePage    string
 	Template    string
+	GitPushHost string
 	Private     bool
 	Confirm     bool
 	Repository  *scm.Repository
@@ -72,6 +73,7 @@ func NewCmdCreateRepository() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&o.Description, "description", "d", "", "the repository description")
 	cmd.Flags().StringVarP(&o.HomePage, "home-page", "", "", "the repository home page")
 	cmd.Flags().StringVarP(&o.Template, "template", "", "", "the git template repository to create the repository from")
+	cmd.Flags().StringVarP(&o.GitPushHost, "push-host", "", "", "the git host to use when pushing to the git repository. Only really useful in BDD tests if using something like 'kubectl portforward' to access a git repository where you want to push from outside the cluster with a different host name to the host name used inside the cluster")
 	cmd.Flags().BoolVarP(&o.Private, "private", "", false, "if the repository should be private")
 	cmd.Flags().BoolVarP(&o.Confirm, "confirm", "", false, "confirms creating the repository")
 
@@ -178,6 +180,16 @@ func (o *Options) createTemplate(template string) error {
 	remote := "newrepo"
 
 	cloneURL := o.Repository.Clone
+	if cloneURL != "" && o.GitPushHost != "" {
+		u, err := url.Parse(cloneURL)
+		if err != nil {
+			return errors.Wrapf(err, "failed to parse repository clone URL %s", cloneURL)
+		}
+		u.Host = o.GitPushHost
+		cloneURL = u.String()
+		log.Logger().Infof("switching to the git clone URL %s", info(cloneURL))
+	}
+
 	username := o.Options.Username
 	remoteURL, err := stringhelpers.URLSetUserPassword(cloneURL, username, o.Options.Token)
 	if err != nil {
