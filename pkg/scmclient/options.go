@@ -41,6 +41,9 @@ func (o *Options) Validate() (*scm.Client, error) {
 	if o.Username == "" {
 		o.Username = os.Getenv("GIT_USERNAME")
 	}
+	if o.Username == "" {
+		o.Username = os.Getenv("GIT_USER")
+	}
 	if o.Token == "" {
 		o.Token = os.Getenv("GIT_TOKEN")
 	}
@@ -58,7 +61,7 @@ func (o *Options) Validate() (*scm.Client, error) {
 
 	var err error
 	if o.ScmClient == nil {
-		o.ScmClient, err = factory.NewClient(o.Kind, o.Server, o.Token)
+		o.ScmClient, err = factory.NewClient(o.Kind, o.Server, o.Token, factory.SetUsername(o.Username))
 		if err != nil {
 			return o.ScmClient, errors.Wrapf(err, "failed to create ScmClient for kind %s server %s", o.Kind, o.Server)
 		}
