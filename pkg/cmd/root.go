@@ -15,7 +15,7 @@ import (
 func Main() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   rootcmd.TopLevelCommand,
-		Short: "GitOps utility commands",
+		Short: "commands for working with git repositories, pull requests and releases",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := cmd.Help()
 			if err != nil {
