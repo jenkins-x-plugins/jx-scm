@@ -1,4 +1,4 @@
-FROM gcr.io/jenkinsxio/jx-boot:3.0.759
+FROM ghcr.io/jenkins-x/jx-boot:latest
 
 RUN apk --no-cache add sed
     
