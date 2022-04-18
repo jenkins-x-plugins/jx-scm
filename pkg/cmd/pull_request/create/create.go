@@ -23,7 +23,13 @@ var (
 
 	cmdExample = templates.Examples(`
 		# creates a pull request for a branch 
-		%s pull-request create --owner foo --repository bar --title something
+		%s pull-request create \
+			--owner foo \
+			--repository bar \
+			--title "A good reason to merge" \
+			--body "Useful details for reviewers" \
+			--head some-feature-branch \
+			--base main
 	`)
 
 	info = termcolor.ColorInfo
