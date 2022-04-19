@@ -20,6 +20,14 @@ Creates a new git provider in a git server
 
 .SH OPTIONS
 .PP
+\fB\-b\fP, \fB\-\-batch\-mode\fP[=false]
+    Runs in batch mode without prompting for user input
+
+.PP
+\fB\-\-confirm\fP[=false]
+    confirms creating the repository
+
+.PP
 \fB\-d\fP, \fB\-\-description\fP=""
     the repository description
 
@@ -36,6 +44,10 @@ Creates a new git provider in a git server
     the kind of git server to use
 
 .PP
+\fB\-\-log\-level\fP=""
+    Sets the logging level. If not specified defaults to $JX\_LOG\_LEVEL
+
+.PP
 \fB\-n\fP, \fB\-\-name\fP=""
     the name of the repository to create
 
@@ -48,8 +60,16 @@ Creates a new git provider in a git server
     if the repository should be private
 
 .PP
+\fB\-\-push\-host\fP=""
+    the git host to use when pushing to the git repository. Only really useful in BDD tests if using something like 'kubectl portforward' to access a git repository where you want to push from outside the cluster with a different host name to the host name used inside the cluster
+
+.PP
 \fB\-s\fP, \fB\-\-server\fP=""
     the git server URL to use
+
+.PP
+\fB\-\-template\fP=""
+    the git template repository to create the repository from
 
 .PP
 \fB\-t\fP, \fB\-\-token\fP=""
@@ -59,12 +79,21 @@ Creates a new git provider in a git server
 \fB\-u\fP, \fB\-\-username\fP=""
     the user name to use on the git server
 
+.PP
+\fB\-\-verbose\fP[=false]
+    Enables verbose output. The environment variable JX\_LOG\_LEVEL has precedence over this flag and allows setting the logging level to any value of: panic, fatal, error, warn, info, debug, trace
+
 
 .SH EXAMPLE
 .PP
 # creates a new git repository in the given server
   jx\-scm repository create \-\-git\-kind gitlab \-\-git\-server 
-\[la]https://myserver.com\[ra] \-\-owner myuser \-\-name myrepo%!(EXTRA string=jx\-scm)
+\[la]https://myserver.com\[ra] \-\-owner myuser \-\-name myrepo
+
+.PP
+# creates a new git repository using a URL
+  jx\-scm repository create \-\-git\-kind gitlab 
+\[la]https://mygitserver/myowner/myrepo\[ra]
 
 
 .SH SEE ALSO

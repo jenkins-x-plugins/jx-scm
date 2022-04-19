@@ -2,6 +2,7 @@ package pull_request
 
 import (
 	close_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/close"
+	create_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/create"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/spf13/cobra"
@@ -21,5 +22,7 @@ func NewCmdPullRequest() *cobra.Command {
 		},
 	}
 	command.AddCommand(cobras.SplitCommand(close_pr.NewCmdClosePullRequest()))
+	command.AddCommand(cobras.SplitCommand(create_pr.NewCmdCreatePullRequest()))
+
 	return command
 }
