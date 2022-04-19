@@ -24,10 +24,10 @@ var (
 
 	cmdExample = templates.Examples(`
 		# closes pull requests foo/bar number 123
-		%s pull-request close --owner foo --name bar --kind github --server https://github.com --pr 123
+		%s pull-request close --owner foo --name bar --pr 123
 
 		# closes all open pull requests on foo/bar before pull request number 200
-		%s pull-request close --owner foo --name bar --kind github --server https://github.com --before 200
+		%s pull-request close --owner foo --name bar --before 200
 	`)
 
 	info = termcolor.ColorInfo

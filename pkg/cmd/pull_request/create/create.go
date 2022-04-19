@@ -25,8 +25,8 @@ var (
 		# creates a pull request for a branch 
 		%s pull-request create \
 			--owner foo \
-			--repository bar \
-			--title "A good reason to merge" \
+			--name bar \
+			--title "chore: a good reason to merge" \
 			--body "Useful details for reviewers" \
 			--head some-feature-branch \
 			--base main

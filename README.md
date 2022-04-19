@@ -12,12 +12,27 @@ jx-scm is a small command line tool working with git providers using [go-scm](ht
 
 Download the [jx-scm binary](https://github.com/jenkins-x-plugins/jx-scm/releases) for your operating system and add it to your `$PATH`.
 
-There will be an `app` you can install soon too...
+## Authentication
 
+To use commands below you will need to authenticate with a Git provider.  This can be done by passing global flags or setting environment variables:
+
+```shell
+jx-scm foo \
+  --server https://github.com \
+  --token abc123 \
+  --kind github
+```
+
+```shell
+export GIT_SERVER=https://github.com
+export GIT_TOKEN=abc123
+export GIT_KIND=github
+
+jx-scm foo
+```
 ## Commands
 
 See the [jx-scm command reference](docs/cmd/jx-scm.md#see-also)
-
 
 ## Developing
 

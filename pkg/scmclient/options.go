@@ -47,6 +47,9 @@ func (o *Options) Validate() (*scm.Client, error) {
 	if o.Token == "" {
 		o.Token = os.Getenv("GIT_TOKEN")
 	}
+	if o.Server == "" {
+		o.Server = os.Getenv("GIT_SERVER")
+	}
 
 	if o.Kind == "" {
 		return nil, options.MissingOption("kind")
