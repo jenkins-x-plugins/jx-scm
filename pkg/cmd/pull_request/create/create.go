@@ -152,7 +152,7 @@ func updateNecessary(head string, base string, updateAllowed bool, scmClient *sc
 	if !updateAllowed {
 		return false, 0
 	}
-	pullRequestListOptions := &scm.PullRequestListOptions{Page: 1, Size: 5000, Open: true, Closed: false}
+	pullRequestListOptions := scm.PullRequestListOptions{Page: 1, Size: 5000, Open: true, Closed: false}
 
 	openPullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, pullRequestListOptions)
 	if err != nil {

@@ -117,7 +117,7 @@ func (o *Options) Run() error {
 
 	if o.Before > 0 {
 		// if before then first list open pull requests
-		pullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, &scm.PullRequestListOptions{Open: true, Size: o.Size})
+		pullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, scm.PullRequestListOptions{Open: true, Size: o.Size})
 		if err != nil {
 			return errors.Wrapf(err, "failed to list pull requests for #%s", fullName)
 		}
