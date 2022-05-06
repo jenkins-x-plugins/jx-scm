@@ -39,7 +39,7 @@ var (
 			--body "Some new reasons to merge" \
 			--head some-feature-branch \
 			--base main \
-			--allowUpdate
+			--allow-update
 	`)
 
 	info = termcolor.ColorInfo
@@ -87,7 +87,7 @@ func NewCmdCreatePullRequest() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&o.Head, "head", "", "", "the name of the branch where your changes are implemented")
 	cmd.Flags().StringVarP(&o.Base, "base", "", "main", "the name of the branch you want the changes pulled into")
 
-	cmd.Flags().BoolVarP(&o.AllowUpdate, "allowUpdate", "", false, "if an open pull request from head branch to base branch exists, setting flag to true will update the pull request")
+	cmd.Flags().BoolVarP(&o.AllowUpdate, "allow-update", "", false, "if an open pull request from head branch to base branch exists, setting flag to true will update the pull request")
 
 	_ = cmd.MarkFlagRequired("owner")
 	_ = cmd.MarkFlagRequired("name")
