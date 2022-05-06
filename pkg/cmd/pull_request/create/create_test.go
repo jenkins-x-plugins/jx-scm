@@ -23,36 +23,30 @@ func TestCreatePullRequest(t *testing.T) {
 	o.Head = "some_feature_branch"
 	o.Base = "main"
 
+	fullName := scm.Join(o.Owner, o.Name)
+
 	scmClient, err := o.Validate()
 	assert.NoError(t, err)
 
-	createPR(t, o, scmClient, err)
-	createPRAgainWithoutAllowUpdate(t, o, scmClient, err)
-	createPRAgainWithAllowUpdate(t, o, scmClient, err)
+	createPR(t, o, fullName, scmClient, err)
+	createPRAgainWithoutAllowUpdate(t, o, fullName, scmClient, err)
+	createPRAgainWithAllowUpdate(t, o, fullName, scmClient, err)
 }
 
-func createPR(t *testing.T, o *create_pr.Options, scmClient *scm.Client, err error) {
-	fullName := scm.Join(o.Owner, o.Name)
-
+func createPR(t *testing.T, o *create_pr.Options, fullName string, scmClient *scm.Client, err error) {
 	o.Title = "some pull request"
 	o.Body = "Drastically improve the product"
 
 	err = o.Run()
 	assert.NoError(t, err, "failed to create the pull request")
 
-	prs, _, err := scmClient.PullRequests.List(context.TODO(), fullName, scm.PullRequestListOptions{})
-	assert.NoError(t, err, "failed to list pull requests")
-	assert.Equal(t, 1, len(prs))
+	prs := assertExpectedPRFound(t, o, fullName, scmClient, err)
+
 	assert.Equal(t, prs[0].Title, o.Title, "title not properly set")
 	assert.Equal(t, prs[0].Body, o.Body, "body not properly set")
-	assert.Equal(t, prs[0].Head.Ref, o.Head, "head not properly set")
-	assert.Equal(t, prs[0].Base.Ref, o.Base, "base not properly set")
-	assert.Equal(t, 1, prs[0].Number, "unexpected pr number set")
 }
 
-func createPRAgainWithoutAllowUpdate(t *testing.T, o *create_pr.Options, scmClient *scm.Client, err error) {
-	fullName := scm.Join(o.Owner, o.Name)
-
+func createPRAgainWithoutAllowUpdate(t *testing.T, o *create_pr.Options, fullName string, scmClient *scm.Client, err error) {
 	previousTitle := o.Title
 	previousBody := o.Body
 
@@ -63,19 +57,13 @@ func createPRAgainWithoutAllowUpdate(t *testing.T, o *create_pr.Options, scmClie
 	err = o.Run()
 	assert.Error(t, err, "expected pull request error did not occur")
 
-	prs, _, err := scmClient.PullRequests.List(context.TODO(), fullName, scm.PullRequestListOptions{})
-	assert.NoError(t, err, "failed to list pull requests")
-	assert.Equal(t, 1, len(prs))
+	prs := assertExpectedPRFound(t, o, fullName, scmClient, err)
+
 	assert.Equal(t, prs[0].Title, previousTitle, "title not properly set")
 	assert.Equal(t, prs[0].Body, previousBody, "body not properly set")
-	assert.Equal(t, prs[0].Head.Ref, o.Head, "head not properly set")
-	assert.Equal(t, prs[0].Base.Ref, o.Base, "base not properly set")
-	assert.Equal(t, 1, prs[0].Number, "unexpected pr number set")
 }
 
-func createPRAgainWithAllowUpdate(t *testing.T, o *create_pr.Options, scmClient *scm.Client, err error) {
-	fullName := scm.Join(o.Owner, o.Name)
-
+func createPRAgainWithAllowUpdate(t *testing.T, o *create_pr.Options, fullName string, scmClient *scm.Client, err error) {
 	o.Title = "An updated PR title"
 	o.Body = "New reason for change"
 	o.AllowUpdate = true
@@ -83,12 +71,18 @@ func createPRAgainWithAllowUpdate(t *testing.T, o *create_pr.Options, scmClient 
 	err = o.Run()
 	assert.NoError(t, err, "failed to update existing pull request")
 
-	prs, _, err := scmClient.PullRequests.List(context.TODO(), fullName, scm.PullRequestListOptions{})
-	assert.NoError(t, err, "failed to list pull requests")
-	assert.Equal(t, 1, len(prs))
+	prs := assertExpectedPRFound(t, o, fullName, scmClient, err)
+
 	assert.Equal(t, prs[0].Title, o.Title, "title not properly set")
 	assert.Equal(t, prs[0].Body, o.Body, "body not properly set")
+}
+
+func assertExpectedPRFound(t *testing.T, o *create_pr.Options, fullName string, scmClient *scm.Client, err error) []*scm.PullRequest {
+	prs, _, err := scmClient.PullRequests.List(context.TODO(), fullName, &scm.PullRequestListOptions{})
+	assert.NoError(t, err, "failed to list pull requests")
+	assert.Equal(t, 1, len(prs))
 	assert.Equal(t, prs[0].Head.Ref, o.Head, "head not properly set")
 	assert.Equal(t, prs[0].Base.Ref, o.Base, "base not properly set")
 	assert.Equal(t, 1, prs[0].Number, "unexpected pr number set")
+	return prs
 }

@@ -154,7 +154,7 @@ func updateNecessary(head string, base string, updateAllowed bool, scmClient *sc
 	}
 	pullRequestListOptions := scm.PullRequestListOptions{Page: 1, Size: 5000, Open: true, Closed: false}
 
-	openPullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, pullRequestListOptions)
+	openPullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, &pullRequestListOptions)
 	if err != nil {
 		log.Logger().Errorf("listing pull requests in repo '%s' failed: %s", fullName, err)
 		return false, 0
