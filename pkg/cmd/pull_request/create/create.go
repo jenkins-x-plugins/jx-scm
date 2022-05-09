@@ -152,12 +152,26 @@ func updateNecessary(head string, base string, updateAllowed bool, scmClient *sc
 	if !updateAllowed {
 		return false, 0
 	}
-	pullRequestListOptions := scm.PullRequestListOptions{Page: 1, Size: 5000, Open: true, Closed: false}
 
-	openPullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, &pullRequestListOptions)
-	if err != nil {
-		log.Logger().Errorf("listing pull requests in repo '%s' failed: %s", fullName, err)
-		return false, 0
+	var openPullRequests []*scm.PullRequest
+	page := 1
+
+	for {
+		pullRequestListOptions := scm.PullRequestListOptions{Page: page, Size: 10, Open: true, Closed: false}
+
+		foundOpenPullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, &pullRequestListOptions)
+		if err != nil {
+			log.Logger().Errorf("listing pull requests in repo '%s' failed: %s", fullName, err)
+			return false, 0
+		}
+
+		if len(foundOpenPullRequests) == 0 {
+			break
+		}
+
+		openPullRequests = append(openPullRequests, foundOpenPullRequests...)
+
+		page += 1
 	}
 
 	for _, openPullRequest := range openPullRequests {
