@@ -78,7 +78,7 @@ func createPRAgainWithAllowUpdate(t *testing.T, o *create_pr.Options, fullName s
 }
 
 func assertExpectedPRFound(t *testing.T, o *create_pr.Options, fullName string, scmClient *scm.Client, err error) []*scm.PullRequest {
-	prs, _, err := scmClient.PullRequests.List(context.TODO(), fullName, &scm.PullRequestListOptions{})
+	prs, _, err := scmClient.PullRequests.List(context.TODO(), fullName, &scm.PullRequestListOptions{Open: true})
 	assert.NoError(t, err, "failed to list pull requests")
 	assert.Equal(t, 1, len(prs))
 	assert.Equal(t, prs[0].Head.Ref, o.Head, "head not properly set")
