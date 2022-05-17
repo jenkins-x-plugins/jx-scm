@@ -30,6 +30,16 @@ var (
 			--body "Useful details for reviewers" \
 			--head some-feature-branch \
 			--base main
+
+		# if pull request from head branch to base exists, updates the pr. otherwise creates the pr
+		%s pull-request create \
+			--owner foo \
+			--name bar \
+			--title "chore: a good reason to merge" \
+			--body "Some new reasons to merge" \
+			--head some-feature-branch \
+			--base main \
+			--allow-update
 	`)
 
 	info = termcolor.ColorInfo
@@ -47,6 +57,8 @@ type Options struct {
 	Head  string
 	Base  string
 
+	AllowUpdate bool
+
 	ScmClient *scm.Client
 }
 
@@ -58,7 +70,7 @@ func NewCmdCreatePullRequest() (*cobra.Command, *Options) {
 		Use:     "create",
 		Short:   "Creates a pull request",
 		Long:    cmdLong,
-		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName),
+		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
 		Run: func(cmd *cobra.Command, args []string) {
 			err := o.Run()
 			helper.CheckErr(err)
@@ -74,6 +86,8 @@ func NewCmdCreatePullRequest() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&o.Body, "body", "", "", "the contents of the pull request")
 	cmd.Flags().StringVarP(&o.Head, "head", "", "", "the name of the branch where your changes are implemented")
 	cmd.Flags().StringVarP(&o.Base, "base", "", "main", "the name of the branch you want the changes pulled into")
+
+	cmd.Flags().BoolVarP(&o.AllowUpdate, "allow-update", "", false, "if an open pull request from head branch to base branch exists, setting flag to true will update the pull request")
 
 	_ = cmd.MarkFlagRequired("owner")
 	_ = cmd.MarkFlagRequired("name")
@@ -111,6 +125,19 @@ func (o *Options) Run() error {
 		Base:  o.Base,
 	}
 
+	shouldUpdate, existingPullRequestNumber := updateNecessary(o.Head, o.Base, o.AllowUpdate, scmClient, ctx, fullName)
+
+	if shouldUpdate {
+		res, _, err := scmClient.PullRequests.Update(ctx, fullName, existingPullRequestNumber, pullRequestInput)
+		if err != nil {
+			return errors.Wrapf(err, "failed to update existing pull request #%d in repo '%s'", existingPullRequestNumber, fullName)
+		}
+
+		log.Logger().Infof("updated pull request #%d in repo '%s'. url: %s", res.Number, res.Base.Repo.FullName, res.Link)
+
+		return nil
+	}
+
 	res, _, err := scmClient.PullRequests.Create(ctx, fullName, pullRequestInput)
 	if err != nil {
 		return errors.Wrapf(err, "failed to create a pull request in the repository '%s' with the title '%s'", fullName, o.Title)
@@ -119,4 +146,39 @@ func (o *Options) Run() error {
 	log.Logger().Infof("created pull request #%d in repo '%s'. url: %s", res.Number, res.Base.Repo.FullName, res.Link)
 
 	return nil
+}
+
+func updateNecessary(head string, base string, updateAllowed bool, scmClient *scm.Client, ctx context.Context, fullName string) (bool, int) {
+	if !updateAllowed {
+		return false, 0
+	}
+
+	var openPullRequests []*scm.PullRequest
+	page := 1
+
+	for {
+		pullRequestListOptions := scm.PullRequestListOptions{Page: page, Size: 10, Open: true, Closed: false}
+
+		foundOpenPullRequests, _, err := scmClient.PullRequests.List(ctx, fullName, &pullRequestListOptions)
+		if err != nil {
+			log.Logger().Errorf("listing pull requests in repo '%s' failed: %s", fullName, err)
+			return false, 0
+		}
+
+		if len(foundOpenPullRequests) == 0 {
+			break
+		}
+
+		openPullRequests = append(openPullRequests, foundOpenPullRequests...)
+
+		page += 1
+	}
+
+	for _, openPullRequest := range openPullRequests {
+		if openPullRequest.Head.Ref == head && openPullRequest.Base.Ref == base {
+			return true, openPullRequest.Number
+		}
+	}
+
+	return false, 0
 }
