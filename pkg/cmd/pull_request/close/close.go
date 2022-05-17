@@ -11,7 +11,6 @@ import (
 	"github.com/jenkins-x/go-scm/scm"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/helper"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/templates"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/termcolor"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -68,22 +67,29 @@ func NewCmdClosePullRequest() (*cobra.Command, *Options) {
 	cmd.Flags().IntVarP(&o.PR, "pr", "", 0, "the pull request to close")
 	cmd.Flags().IntVarP(&o.Size, "size", "", 200, "the number of open pull requests to return if using --before, defaults to 200")
 	cmd.Flags().IntVarP(&o.Before, "before", "", 0, "a pull request number to used to close ALL open pull requests before it")
+
+	_ = cmd.MarkFlagRequired("owner")
+	_ = cmd.MarkFlagRequired("name")
+
 	return cmd, o
 }
 
-// Run transforms the YAML files
+// Validate validates the options and returns the ScmClient
 func (o *Options) Validate() (*scm.Client, error) {
+	// check at least one flags (pr and before) are set but not both
+	if o.PR < 0 && o.Before < 0 {
+		return nil, errors.New("please set --pr or --before flag")
+	}
+
+	if o.PR > 0 && o.Before > 0 {
+		return nil, errors.New("please set ony one of --pr or --before flags")
+	}
+
 	scmClient, err := o.Options.Validate()
 	if err != nil {
 		return scmClient, errors.Wrapf(err, "failed to validate options")
 	}
 
-	if o.Owner == "" {
-		return nil, options.MissingOption("owner")
-	}
-	if o.Name == "" {
-		return nil, options.MissingOption("repository")
-	}
 	return scmClient, nil
 }
 
@@ -98,14 +104,6 @@ func (o *Options) Run() error {
 
 	ctx := context.Background()
 
-	// check at least one flags (pr and before) are set but not both
-	if o.PR < 0 && o.Before < 0 {
-		return errors.New("please set --pr or --before flag")
-	}
-
-	if o.PR > 0 && o.Before > 0 {
-		return errors.New("please set ony one of --pr or --before flags")
-	}
 	// if pr flag set then close it
 	if o.PR > 0 {
 		log.Logger().Infof("closing pull request%s %v", fullName, o.PR)
