@@ -153,6 +153,10 @@ func updateNecessary(head string, base string, updateAllowed bool, scmClient *sc
 		return false, 0
 	}
 
+	return FindOpenPullRequestByBranches(head, base, scmClient, ctx, fullName)
+}
+
+func FindOpenPullRequestByBranches(head string, base string, scmClient *scm.Client, ctx context.Context, fullName string) (bool, int) {
 	var openPullRequests []*scm.PullRequest
 	page := 1
 

@@ -4,16 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jenkins-x/jx-logging/v3/pkg/log"
-
 	"github.com/jenkins-x-plugins/jx-scm/pkg/rootcmd"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/scmclient"
 	"github.com/jenkins-x/go-scm/scm"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/helper"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/templates"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/termcolor"
+	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	create_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/create"
 )
 
 var (
@@ -42,6 +43,10 @@ type Options struct {
 	PR        int
 	Before    int
 	Size      int
+
+	Head  string
+	Base  string
+
 	ScmClient *scm.Client
 }
 
@@ -67,6 +72,8 @@ func NewCmdClosePullRequest() (*cobra.Command, *Options) {
 	cmd.Flags().IntVarP(&o.PR, "pr", "", 0, "the pull request to close")
 	cmd.Flags().IntVarP(&o.Size, "size", "", 200, "the number of open pull requests to return if using --before, defaults to 200")
 	cmd.Flags().IntVarP(&o.Before, "before", "", 0, "a pull request number to used to close ALL open pull requests before it")
+	cmd.Flags().StringVarP(&o.Head, "head", "", "", "the name of the branch where changes are implemented")
+	cmd.Flags().StringVarP(&o.Base, "base", "", "main", "the name of the branch the changes would be pulled into")
 
 	_ = cmd.MarkFlagRequired("owner")
 	_ = cmd.MarkFlagRequired("name")
@@ -77,12 +84,25 @@ func NewCmdClosePullRequest() (*cobra.Command, *Options) {
 // Validate validates the options and returns the ScmClient
 func (o *Options) Validate() (*scm.Client, error) {
 	// check at least one flags (pr and before) are set but not both
-	if o.PR < 0 && o.Before < 0 {
-		return nil, errors.New("please set --pr or --before flag")
+	var prFlagSet, beforeFlagSet, baseOrHeadFlagSet int
+	if o.PR < 0 {
+		prFlagSet = 1
 	}
 
-	if o.PR > 0 && o.Before > 0 {
-		return nil, errors.New("please set ony one of --pr or --before flags")
+	if o.Before < 0 {
+		beforeFlagSet = 1
+	}
+
+	if o.Head != "" || o.Base != "" {
+		baseOrHeadFlagSet = 1
+	}
+
+	if prFlagSet + beforeFlagSet + baseOrHeadFlagSet != 1 {
+		return nil, errors.New("must set either --pr or --before or both --head and -- base flags")
+	}
+
+	if (o.Head == "" && o.Base != "") || (o.Head != "" && o.Base == "") {
+		return nil, errors.New("--base and --head must be set together")
 	}
 
 	scmClient, err := o.Options.Validate()
@@ -128,6 +148,19 @@ func (o *Options) Run() error {
 				}
 				log.Logger().Infof("closing pull request%s %v", fullName, pr.Number)
 			}
+		}
+	}
+
+	if o.Head != "" && o.Base != "" {
+		foundOpenPR, pullRequestNumber := create_pr.FindOpenPullRequestByBranches(o.Head, o.Base,scmClient, ctx, fullName)
+		if !foundOpenPR{
+			log.Logger().Infof("no open pull request from branch %s to base branch %s", o.Head, o.Base)
+		}
+
+		log.Logger().Infof("closing pull request #%d", pullRequestNumber)
+		_, err := scmClient.PullRequests.Close(ctx, fullName, pullRequestNumber)
+		if err != nil {
+			return errors.Wrapf(err, "failed to close pull request %s #%v", fullName, o.PR)
 		}
 	}
 
