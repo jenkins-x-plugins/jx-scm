@@ -43,12 +43,12 @@ type Options struct {
 	Owner string
 	Name  string
 
-	PR        int
-	Before    int
-	Size      int
+	PR     int
+	Before int
+	Size   int
 
-	Head  string
-	Base  string
+	Head string
+	Base string
 
 	ScmClient *scm.Client
 }
@@ -100,7 +100,7 @@ func (o *Options) Validate() (*scm.Client, error) {
 		baseOrHeadFlagSet = 1
 	}
 
-	if prFlagSet + beforeFlagSet + baseOrHeadFlagSet != 1 {
+	if prFlagSet+beforeFlagSet+baseOrHeadFlagSet != 1 {
 		return nil, errors.New("must set either --pr or --before or both --head and -- base flags")
 	}
 
@@ -155,8 +155,8 @@ func (o *Options) Run() error {
 	}
 
 	if o.Head != "" && o.Base != "" {
-		foundOpenPR, pullRequestNumber := create_pr.FindOpenPullRequestByBranches(o.Head, o.Base,scmClient, ctx, fullName)
-		if !foundOpenPR{
+		foundOpenPR, pullRequestNumber := create_pr.FindOpenPullRequestByBranches(o.Head, o.Base, scmClient, ctx, fullName)
+		if !foundOpenPR {
 			log.Logger().Infof("no open pull request from branch %s to base branch %s", o.Head, o.Base)
 		} else {
 			log.Logger().Infof("closing pull request #%d", pullRequestNumber)

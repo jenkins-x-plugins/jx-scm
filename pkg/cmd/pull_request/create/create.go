@@ -81,7 +81,6 @@ func NewCmdCreatePullRequest() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository. Either an organisation or username")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository")
 
-
 	cmd.Flags().StringVarP(&o.Title, "title", "", "", "the title of the new pull request")
 	cmd.Flags().StringVarP(&o.Body, "body", "", "", "the contents of the pull request")
 	cmd.Flags().StringVarP(&o.Head, "head", "", "", "the name of the branch where your changes are implemented")
