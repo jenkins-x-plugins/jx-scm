@@ -155,12 +155,12 @@ func (o *Options) Run() error {
 		foundOpenPR, pullRequestNumber := create_pr.FindOpenPullRequestByBranches(o.Head, o.Base,scmClient, ctx, fullName)
 		if !foundOpenPR{
 			log.Logger().Infof("no open pull request from branch %s to base branch %s", o.Head, o.Base)
-		}
-
-		log.Logger().Infof("closing pull request #%d", pullRequestNumber)
-		_, err := scmClient.PullRequests.Close(ctx, fullName, pullRequestNumber)
-		if err != nil {
-			return errors.Wrapf(err, "failed to close pull request %s #%v", fullName, o.PR)
+		} else {
+			log.Logger().Infof("closing pull request #%d", pullRequestNumber)
+			_, err := scmClient.PullRequests.Close(ctx, fullName, pullRequestNumber)
+			if err != nil {
+				return errors.Wrapf(err, "failed to close pull request %s #%v", fullName, o.PR)
+			}
 		}
 	}
 
