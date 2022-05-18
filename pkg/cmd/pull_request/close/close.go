@@ -28,6 +28,9 @@ var (
 
 		# closes all open pull requests on foo/bar before pull request number 200
 		%s pull-request close --owner foo --name bar --before 200
+
+		# close an open pull request on foo/bar from branch baz onto base branch main
+		%s pull-request close --owner foo --name bar --head baz --base main
 	`)
 
 	info = termcolor.ColorInfo

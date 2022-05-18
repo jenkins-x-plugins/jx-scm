@@ -20,8 +20,16 @@ Update a release
 
 .SH OPTIONS
 .PP
+\fB\-\-base\fP="main"
+    the name of the branch the changes would be pulled into
+
+.PP
 \fB\-\-before\fP=0
     a pull request number to used to close ALL open pull requests before it
+
+.PP
+\fB\-\-head\fP=""
+    the name of the branch where changes are implemented
 
 .PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
@@ -68,6 +76,10 @@ Update a release
 .PP
 # closes all open pull requests on foo/bar before pull request number 200
   jx\-scm pull\-request close \-\-owner foo \-\-name bar \-\-before 200
+
+.PP
+# close an open pull request on foo/bar from branch baz onto base branch main
+  %!s(MISSING) pull\-request close \-\-owner foo \-\-name bar \-\-head baz \-\-base main
 
 
 .SH SEE ALSO
