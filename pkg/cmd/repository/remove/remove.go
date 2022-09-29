@@ -140,7 +140,7 @@ func (o *Options) Run() error {
 
 	currentUser := user.Login
 
-	listOptions := scm.ListOptions{
+	listOptions := &scm.ListOptions{
 		Size: 100,
 	}
 	for {
