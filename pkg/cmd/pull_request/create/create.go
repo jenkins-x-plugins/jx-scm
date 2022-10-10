@@ -81,7 +81,6 @@ func NewCmdCreatePullRequest() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository. Either an organisation or username")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository")
 
-
 	cmd.Flags().StringVarP(&o.Title, "title", "", "", "the title of the new pull request")
 	cmd.Flags().StringVarP(&o.Body, "body", "", "", "the contents of the pull request")
 	cmd.Flags().StringVarP(&o.Head, "head", "", "", "the name of the branch where your changes are implemented")
@@ -153,6 +152,10 @@ func updateNecessary(head string, base string, updateAllowed bool, scmClient *sc
 		return false, 0
 	}
 
+	return FindOpenPullRequestByBranches(head, base, scmClient, ctx, fullName)
+}
+
+func FindOpenPullRequestByBranches(head string, base string, scmClient *scm.Client, ctx context.Context, fullName string) (bool, int) {
 	var openPullRequests []*scm.PullRequest
 	page := 1
 
