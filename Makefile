@@ -192,3 +192,16 @@ docs: bin/docs #generate-refdocs ## update docs
 	@./bin/docs --target=./docs/cmd
 	@./bin/docs --target=./docs/man/man1 --kind=man
 	@rm -f ./bin/docs
+
+# temporary desk checking
+
+ID := $(shell uuidgen)
+.PHONY: desk
+desk:
+	#./build/jx-scm repository create --kind github --server https://$$GH_HOST --token $$GH_TOKEN --owner $$GH_ORG --name JX_SCM_TEST_$(ID)
+	#./build/jx-scm repository create --kind gitlab --server $$GITLAB_HOST --token $$GITLAB_TOKEN --owner $$GITLAB_GROUP --username $$GITLAB_USERNAME --name JX_SCM_TEST_$(ID)
+
+	# How to create a project
+	# az devops project create --organization https://dev.azure.com/$AZURE_ORG/ --name $AZURE_PROJECT
+
+	./build/jx-scm repository create --kind azure --server https://dev.azure.com --token $$AZURE_DEVOPS_EXT_PAT --owner $$AZURE_ORG/$$AZURE_PROJECT --name JX_SCM_TEST_$(ID)
