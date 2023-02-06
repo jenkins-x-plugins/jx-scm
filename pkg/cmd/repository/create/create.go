@@ -83,7 +83,7 @@ func NewCmdCreateRepository() (*cobra.Command, *Options) {
 	return cmd, o
 }
 
-// Run transforms the YAML files
+// Validate create parameters
 func (o *Options) Validate() (*scm.Client, error) {
 	if len(o.Args) > 0 {
 		repoURL := o.Args[0]
