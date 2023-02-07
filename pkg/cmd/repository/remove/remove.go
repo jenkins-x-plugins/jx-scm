@@ -138,6 +138,10 @@ func (o *Options) Run() error {
 		return errors.Wrapf(err, "failed to lookup current user")
 	}
 
+	if o.CreatedBeforeTime != nil && o.GitKind == "azure" {
+		return fmt.Errorf("azure does not support date filtering")
+	}
+
 	currentUser := user.Login
 
 	listOptions := &scm.ListOptions{
@@ -218,7 +222,7 @@ func (o *Options) Matches(repo *scm.Repository) bool {
 	if repo.Namespace != o.Owner {
 		return false
 	}
-	if o.CreatedBeforeTime != nil && o.CreatedBeforeTime.Before(repo.Created) {
+	if o.CreatedBeforeTime != nil && (o.CreatedBeforeTime.Before(repo.Created) || repo.Created.IsZero()) {
 		return false
 	}
 	if len(o.Includes) == 0 {
