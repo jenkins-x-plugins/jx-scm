@@ -133,16 +133,20 @@ func (o *Options) Run() error {
 
 	ctx := context.Background()
 
-	user, _, err := scmClient.Users.Find(ctx)
-	if err != nil {
-		return errors.Wrapf(err, "failed to lookup current user")
+	var currentUser string
+	if o.GitKind != "azure" {
+		user, _, err := scmClient.Users.Find(ctx)
+		if err != nil {
+			return errors.Wrapf(err, "failed to lookup current user")
+		}
+		currentUser = user.Login
+	} else {
+		currentUser = ""
 	}
 
 	if o.CreatedBeforeTime != nil && o.GitKind == "azure" {
 		return fmt.Errorf("azure does not support date filtering")
 	}
-
-	currentUser := user.Login
 
 	listOptions := &scm.ListOptions{
 		Size: 100,
