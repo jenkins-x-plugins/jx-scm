@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	pull "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request"
+	pull "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pr"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/release"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/repository"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/version"

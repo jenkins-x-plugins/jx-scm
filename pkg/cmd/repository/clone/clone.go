@@ -2,6 +2,7 @@ package clone
 
 import (
 	"fmt"
+
 	"github.com/jenkins-x-plugins/jx-scm/pkg/rootcmd"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/helper"
@@ -65,7 +66,7 @@ func (o *Options) Validate() error {
 		return errors.Wrapf(err, "failed to validate base options")
 	}
 
-	if len(o.Args) <= 0 {
+	if len(o.Args) == 0 {
 		return errors.Errorf("missing repository URL argument")
 	}
 	o.CloneURL = o.Args[0]

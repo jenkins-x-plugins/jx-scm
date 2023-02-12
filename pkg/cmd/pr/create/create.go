@@ -1,4 +1,4 @@
-package create_pr
+package create
 
 import (
 	"context"
@@ -42,7 +42,7 @@ var (
 			--allow-update
 	`)
 
-	info = termcolor.ColorInfo
+	_ = termcolor.ColorInfo
 )
 
 // LabelOptions the options for the command
@@ -124,7 +124,7 @@ func (o *Options) Run() error {
 		Base:  o.Base,
 	}
 
-	shouldUpdate, existingPullRequestNumber := updateNecessary(o.Head, o.Base, o.AllowUpdate, scmClient, ctx, fullName)
+	shouldUpdate, existingPullRequestNumber := updateNecessary(ctx, o.Head, o.Base, o.AllowUpdate, scmClient, fullName)
 
 	if shouldUpdate {
 		res, _, err := scmClient.PullRequests.Update(ctx, fullName, existingPullRequestNumber, pullRequestInput)
@@ -147,15 +147,15 @@ func (o *Options) Run() error {
 	return nil
 }
 
-func updateNecessary(head string, base string, updateAllowed bool, scmClient *scm.Client, ctx context.Context, fullName string) (bool, int) {
+func updateNecessary(ctx context.Context, head string, base string, updateAllowed bool, scmClient *scm.Client, fullName string) (bool, int) {
 	if !updateAllowed {
 		return false, 0
 	}
 
-	return FindOpenPullRequestByBranches(head, base, scmClient, ctx, fullName)
+	return FindOpenPullRequestByBranches(ctx, head, base, scmClient, fullName)
 }
 
-func FindOpenPullRequestByBranches(head string, base string, scmClient *scm.Client, ctx context.Context, fullName string) (bool, int) {
+func FindOpenPullRequestByBranches(ctx context.Context, head string, base string, scmClient *scm.Client, fullName string) (bool, int) {
 	var openPullRequests []*scm.PullRequest
 	page := 1
 
@@ -174,7 +174,7 @@ func FindOpenPullRequestByBranches(head string, base string, scmClient *scm.Clie
 
 		openPullRequests = append(openPullRequests, foundOpenPullRequests...)
 
-		page += 1
+		page++
 	}
 
 	for _, openPullRequest := range openPullRequests {

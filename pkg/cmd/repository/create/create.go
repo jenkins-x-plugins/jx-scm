@@ -3,6 +3,9 @@ package create
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/jenkins-x-plugins/jx-scm/pkg/rootcmd"
 	"github.com/jenkins-x-plugins/jx-scm/pkg/scmclient"
 	"github.com/jenkins-x/go-scm/scm"
@@ -15,8 +18,6 @@ import (
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"net/url"
-	"strings"
 )
 
 var (

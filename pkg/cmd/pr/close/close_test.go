@@ -1,4 +1,4 @@
-package close_pr_test
+package close_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/jenkins-x/go-scm/scm"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/close"
+	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pr/close"
 )
 
 func TestClosePullRequestByNumber(t *testing.T) {
@@ -19,7 +19,7 @@ func TestClosePullRequestByBefore(t *testing.T) {
 }
 
 func TestClosePullRequestByBranches(t *testing.T) {
-	_, o := close_pr.NewCmdClosePullRequest()
+	_, o := close.NewCmdClosePullRequest()
 
 	o.Kind = "fake"
 	o.Server = "https://github.com"

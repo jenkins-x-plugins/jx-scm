@@ -28,7 +28,7 @@ var (
 		%s release update --owner foo --repository bar --tag v1.2.3 --pre-release false
 	`)
 
-	info = termcolor.ColorInfo
+	_ = termcolor.ColorInfo
 )
 
 // LabelOptions the options for the command

@@ -2,10 +2,11 @@ package scmclient
 
 import (
 	"context"
+	"os"
+
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
-	"os"
 
 	"github.com/jenkins-x/go-scm/scm"
 	"github.com/jenkins-x/go-scm/scm/factory"

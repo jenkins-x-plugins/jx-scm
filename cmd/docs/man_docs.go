@@ -65,7 +65,7 @@ func GenManTreeFromOpts(cmd *cobra.Command, opts GenManTreeOptions) error {
 	if opts.CommandSeparator != "" {
 		separator = opts.CommandSeparator
 	}
-	basename := strings.Replace(cmd.CommandPath(), " ", separator, -1)
+	basename := strings.ReplaceAll(cmd.CommandPath(), " ", separator)
 	filename := filepath.Join(opts.Path, basename+"."+section)
 	f, err := os.Create(filename)
 	if err != nil {
@@ -112,7 +112,7 @@ func GenMan(cmd *cobra.Command, header *GenManHeader, w io.Writer) error {
 
 func fillHeader(header *GenManHeader, name string) error {
 	if header.Title == "" {
-		header.Title = strings.ToUpper(strings.Replace(name, " ", "\\-", -1))
+		header.Title = strings.ToUpper(strings.ReplaceAll(name, " ", "\\-"))
 	}
 	if header.Section == "" {
 		header.Section = "1"
@@ -123,25 +123,25 @@ func fillHeader(header *GenManHeader, name string) error {
 	return nil
 }
 
-func manPreamble(buf *bytes.Buffer, header *GenManHeader, cmd *cobra.Command, dashedName string) {
+func manPreamble(buf io.StringWriter, header *GenManHeader, cmd *cobra.Command, dashedName string) {
 	description := cmd.Long
 	if len(description) == 0 {
 		description = cmd.Short
 	}
 
-	buf.WriteString(fmt.Sprintf(`%% %s(%s)
+	_, _ = buf.WriteString(fmt.Sprintf(`%% %s(%s)
 %% %s
 %% %s
 # NAME
 `, header.Title, header.Section, header.Source, header.Manual))
-	buf.WriteString(fmt.Sprintf("%s \\- %s\n\n", dashedName, cmd.Short))
-	buf.WriteString("# SYNOPSIS\n")
-	buf.WriteString(fmt.Sprintf("**%s**\n\n", cmd.UseLine()))
-	buf.WriteString("# DESCRIPTION\n")
-	buf.WriteString(description + "\n\n")
+	_, _ = buf.WriteString(fmt.Sprintf("%s \\- %s\n\n", dashedName, cmd.Short))
+	_, _ = buf.WriteString("# SYNOPSIS\n")
+	_, _ = buf.WriteString(fmt.Sprintf("**%s**\n\n", cmd.UseLine()))
+	_, _ = buf.WriteString("# DESCRIPTION\n")
+	_, _ = buf.WriteString(description + "\n\n")
 }
 
-func manPrintFlags(buf *bytes.Buffer, flags *pflag.FlagSet) {
+func manPrintFlags(buf io.StringWriter, flags *pflag.FlagSet) {
 	flags.VisitAll(func(flag *pflag.Flag) {
 		if len(flag.Deprecated) > 0 || flag.Hidden {
 			return
@@ -165,22 +165,22 @@ func manPrintFlags(buf *bytes.Buffer, flags *pflag.FlagSet) {
 			format += "]"
 		}
 		format += "\n\t%s\n\n"
-		buf.WriteString(fmt.Sprintf(format, flag.DefValue, flag.Usage))
+		_, _ = buf.WriteString(fmt.Sprintf(format, flag.DefValue, flag.Usage))
 	})
 }
 
-func manPrintOptions(buf *bytes.Buffer, command *cobra.Command) {
+func manPrintOptions(buf io.StringWriter, command *cobra.Command) {
 	flags := command.NonInheritedFlags()
 	if flags.HasAvailableFlags() {
-		buf.WriteString("# OPTIONS\n")
+		_, _ = buf.WriteString("# OPTIONS\n")
 		manPrintFlags(buf, flags)
-		buf.WriteString("\n")
+		_, _ = buf.WriteString("\n")
 	}
 	flags = command.InheritedFlags()
 	if flags.HasAvailableFlags() {
-		buf.WriteString("# OPTIONS INHERITED FROM PARENT COMMANDS\n")
+		_, _ = buf.WriteString("# OPTIONS INHERITED FROM PARENT COMMANDS\n")
 		manPrintFlags(buf, flags)
-		buf.WriteString("\n")
+		_, _ = buf.WriteString("\n")
 	}
 }
 
@@ -189,7 +189,7 @@ func genMan(cmd *cobra.Command, header *GenManHeader) []byte {
 	cmd.InitDefaultHelpFlag()
 
 	// something like `rootcmd-subcmd1-subcmd2`
-	dashCommandName := strings.Replace(cmd.CommandPath(), " ", "-", -1)
+	dashCommandName := strings.ReplaceAll(cmd.CommandPath(), " ", "-")
 
 	buf := new(bytes.Buffer)
 
@@ -204,7 +204,7 @@ func genMan(cmd *cobra.Command, header *GenManHeader) []byte {
 		seealsos := make([]string, 0)
 		if cmd.HasParent() {
 			parentPath := cmd.Parent().CommandPath()
-			dashParentPath := strings.Replace(parentPath, " ", "-", -1)
+			dashParentPath := strings.ReplaceAll(parentPath, " ", "-")
 			seealso := fmt.Sprintf("**%s(%s)**", dashParentPath, header.Section)
 			seealsos = append(seealsos, seealso)
 			cmd.VisitParents(func(c *cobra.Command) {

@@ -1,4 +1,4 @@
-package close_pr
+package close
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	create_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/create"
+	create_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pr/create"
 )
 
 var (
@@ -33,7 +33,7 @@ var (
 		%s pull-request close --owner foo --name bar --head baz --base main
 	`)
 
-	info = termcolor.ColorInfo
+	_ = termcolor.ColorInfo
 )
 
 // LabelOptions the options for the command
@@ -155,7 +155,7 @@ func (o *Options) Run() error {
 	}
 
 	if o.Head != "" && o.Base != "" {
-		foundOpenPR, pullRequestNumber := create_pr.FindOpenPullRequestByBranches(o.Head, o.Base, scmClient, ctx, fullName)
+		foundOpenPR, pullRequestNumber := create_pr.FindOpenPullRequestByBranches(ctx, o.Head, o.Base, scmClient, fullName)
 		if !foundOpenPR {
 			log.Logger().Infof("no open pull request from branch %s to base branch %s", o.Head, o.Base)
 		} else {

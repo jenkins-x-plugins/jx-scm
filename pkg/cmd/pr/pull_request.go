@@ -1,8 +1,8 @@
-package pull_request
+package pr
 
 import (
-	close_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/close"
-	create_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pull_request/create"
+	close_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pr/close"
+	create_pr "github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pr/create"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/spf13/cobra"
