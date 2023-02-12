@@ -1,6 +1,6 @@
 module github.com/jenkins-x-plugins/jx-scm
 
-replace github.com/jenkins-x/go-scm => /Users/rabdulaziz/workspace/go-scm
+replace github.com/jenkins-x/go-scm => github.com/squeedee/go-scm v0.0.0-20230210023950-b365bf257fa3
 
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
