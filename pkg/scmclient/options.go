@@ -72,7 +72,7 @@ func (o *Options) Validate() (*scm.Client, error) {
 	}
 
 	ctx := context.Background()
-	if o.Username == "" {
+	if o.Username == "" && o.Kind != "azure" {
 		user, _, err := o.ScmClient.Users.Find(ctx)
 		if err != nil {
 			return o.ScmClient, errors.Wrapf(err, "failed to find current user")

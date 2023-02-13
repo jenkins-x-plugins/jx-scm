@@ -74,7 +74,7 @@ func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 	}
 	o.Factory.AddFlags(cmd)
 
-	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username")
+	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username.  For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "the name of the repository to create")
 	cmd.Flags().StringVarP(&o.CreatedBefore, "created-before", "", "", "the time expression for removing repositories created before this time")
 	cmd.Flags().IntVarP(&o.CreatedDaysAgo, "created-days-ago", "", 0, "remove repositories created more than this number of days ago")
@@ -133,12 +133,20 @@ func (o *Options) Run() error {
 
 	ctx := context.Background()
 
-	user, _, err := scmClient.Users.Find(ctx)
-	if err != nil {
-		return errors.Wrapf(err, "failed to lookup current user")
+	var currentUser string
+	if o.GitKind != "azure" {
+		user, _, err := scmClient.Users.Find(ctx)
+		if err != nil {
+			return errors.Wrapf(err, "failed to lookup current user")
+		}
+		currentUser = user.Login
+	} else {
+		currentUser = ""
 	}
 
-	currentUser := user.Login
+	if o.CreatedBeforeTime != nil && o.GitKind == "azure" {
+		return fmt.Errorf("azure does not support date filtering")
+	}
 
 	listOptions := &scm.ListOptions{
 		Size: 100,
@@ -218,7 +226,7 @@ func (o *Options) Matches(repo *scm.Repository) bool {
 	if repo.Namespace != o.Owner {
 		return false
 	}
-	if o.CreatedBeforeTime != nil && o.CreatedBeforeTime.Before(repo.Created) {
+	if o.CreatedBeforeTime != nil && (o.CreatedBeforeTime.Before(repo.Created) || repo.Created.IsZero()) {
 		return false
 	}
 	if len(o.Includes) == 0 {

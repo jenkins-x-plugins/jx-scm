@@ -69,7 +69,7 @@ func NewCmdCreateRepository() (*cobra.Command, *Options) {
 		},
 	}
 
-	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username")
+	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username.  For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "the name of the repository to create")
 	cmd.Flags().StringVarP(&o.Description, "description", "d", "", "the repository description")
 	cmd.Flags().StringVarP(&o.HomePage, "home-page", "", "", "the repository home page")
@@ -83,7 +83,7 @@ func NewCmdCreateRepository() (*cobra.Command, *Options) {
 	return cmd, o
 }
 
-// Run transforms the YAML files
+// Validate create parameters
 func (o *Options) Validate() (*scm.Client, error) {
 	if len(o.Args) > 0 {
 		repoURL := o.Args[0]

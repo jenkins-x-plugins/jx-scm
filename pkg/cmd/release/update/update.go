@@ -60,7 +60,7 @@ func NewCmdUpdateRelease() (*cobra.Command, *Options) {
 	}
 	o.Options.AddFlags(cmd)
 
-	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to update. Either an organisation or username")
+	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to update. Either an organisation or username.  For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository to update")
 	cmd.Flags().StringVarP(&o.Tag, "tag", "", "", "the tag of the release to update")
 
