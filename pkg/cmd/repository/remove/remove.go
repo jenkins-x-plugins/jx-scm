@@ -74,7 +74,7 @@ func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 	}
 	o.Factory.AddFlags(cmd)
 
-	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username")
+	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username.  For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "the name of the repository to create")
 	cmd.Flags().StringVarP(&o.CreatedBefore, "created-before", "", "", "the time expression for removing repositories created before this time")
 	cmd.Flags().IntVarP(&o.CreatedDaysAgo, "created-days-ago", "", 0, "remove repositories created more than this number of days ago")

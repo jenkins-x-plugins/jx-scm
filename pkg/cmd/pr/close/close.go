@@ -69,7 +69,7 @@ func NewCmdClosePullRequest() (*cobra.Command, *Options) {
 	}
 	o.Options.AddFlags(cmd)
 
-	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository that contains pull requests to close. Either an organisation or username")
+	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository that contains pull requests to close. Either an organisation or username. For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository that contains pull requests to close")
 
 	cmd.Flags().IntVarP(&o.PR, "pr", "", 0, "the pull request to close")
