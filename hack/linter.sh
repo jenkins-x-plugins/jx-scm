@@ -18,17 +18,14 @@ export GO111MODULE=on
 golangci-lint run \
 	--no-config \
   --disable-all \
-  -E golint \
-  -E varcheck \
+  -E revive \
   -E errcheck \
 	-E misspell \
 	-E unconvert \
-  -E deadcode \
   -E unconvert \
   -E gosec \
   -E gofmt \
   -E goimports \
-  -E structcheck \
   -E interfacer \
   -E govet \
   -E unparam \
