@@ -8,6 +8,7 @@ spec:
     tasks:
     - name: chart
       resources: {}
+      timeout: 240h0m0s
       taskSpec:
         metadata: {}
         stepTemplate:
