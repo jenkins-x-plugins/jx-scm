@@ -226,8 +226,8 @@ github.com/imdario/mergo v0.3.15/go.mod h1:WBLT9ZmE3lPoWsEzCh9LPo3TiwVN+ZKEjmz+h
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
-github.com/jenkins-x/go-scm v1.14.24 h1:m6btHeg/DUXNJeRa4ySAgwmwCEY7s1OjSkdK6Y1DFKI=
-github.com/jenkins-x/go-scm v1.14.24/go.mod h1:lKqSATMN9YB1Dbl8s8tzaUf5AFlAd+JRFipu2M6Ut2Y=
+github.com/jenkins-x/go-scm v1.14.25 h1:kJpnb8BDp6OXuCc16vG0YHfMKJtRXYY3zY2sHANl0D0=
+github.com/jenkins-x/go-scm v1.14.25/go.mod h1:UY/0wAbusny+ZS+1fHU3lezv5gNwbevujp+tDoAEKYc=
 github.com/jenkins-x/jx-api/v4 v4.4.0 h1:N7nd0ao7sxv8l12YIMYSjRnbmhFn6qLQM4wBbI/n1o0=
 github.com/jenkins-x/jx-api/v4 v4.4.0/go.mod h1:1ZPMGLTfWeDz4CoB+QBScVQM+AjS780osJ4W6mHJWlk=
 github.com/jenkins-x/jx-helpers/v3 v3.6.4 h1:eCgvamWutOA0ywLn544MgyUBwrGpbnKm4LnlhobmyBI=
