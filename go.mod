@@ -2,7 +2,7 @@ module github.com/jenkins-x-plugins/jx-scm
 
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
-	github.com/jenkins-x/go-scm v1.14.24
+	github.com/jenkins-x/go-scm v1.14.26
 	github.com/jenkins-x/jx-helpers/v3 v3.6.4
 	github.com/jenkins-x/jx-logging/v3 v3.0.11
 	github.com/pkg/errors v0.9.1
@@ -28,7 +28,7 @@ require (
 	github.com/evanphx/json-patch v4.11.0+incompatible // indirect
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-logr/logr v0.4.0 // indirect
+	github.com/go-logr/logr v1.2.0 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
@@ -81,9 +81,9 @@ require (
 	k8s.io/api v0.22.15 // indirect
 	k8s.io/apimachinery v0.29.0 // indirect
 	k8s.io/client-go v11.0.0+incompatible // indirect
-	k8s.io/klog/v2 v2.9.0 // indirect
+	k8s.io/klog/v2 v2.80.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20211109043538-20434351676c // indirect
-	k8s.io/utils v0.0.0-20211116205334-6203023598ed // indirect
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
