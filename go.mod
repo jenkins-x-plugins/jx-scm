@@ -2,7 +2,7 @@ module github.com/jenkins-x-plugins/jx-scm
 
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
-	github.com/jenkins-x/go-scm v1.14.41
+	github.com/jenkins-x/go-scm v1.14.43
 	github.com/jenkins-x/jx-helpers/v3 v3.7.1
 	github.com/jenkins-x/jx-logging/v3 v3.0.16
 	github.com/pkg/errors v0.9.1
@@ -15,7 +15,7 @@ require (
 	code.gitea.io/sdk/gitea v0.14.0 // indirect
 	github.com/AlecAivazis/survey/v2 v2.3.4 // indirect
 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
-	github.com/bluekeyes/go-gitdiff v0.7.4 // indirect
+	github.com/bluekeyes/go-gitdiff v0.8.0 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
