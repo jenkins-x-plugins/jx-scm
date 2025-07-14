@@ -13,6 +13,8 @@ import (
 
 // Main creates the new command
 func Main() *cobra.Command {
+	// Initializing logger
+	log.Logger()
 	cmd := &cobra.Command{
 		Annotations: map[string]string{
 			cobra.CommandDisplayNameAnnotation: rootcmd.TopLevelCommand,
@@ -21,7 +23,7 @@ func Main() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			err := cmd.Help()
 			if err != nil {
-				log.Logger().Errorf(err.Error())
+				log.Logger().Error(err.Error())
 			}
 		},
 	}
