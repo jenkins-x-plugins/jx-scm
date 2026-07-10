@@ -67,11 +67,11 @@ func GenManTreeFromOpts(cmd *cobra.Command, opts GenManTreeOptions) error {
 	}
 	basename := strings.ReplaceAll(cmd.CommandPath(), " ", separator)
 	filename := filepath.Join(opts.Path, basename+"."+section)
-	f, err := os.Create(filename)
+	f, err := os.Create(filename) //nolint:gosec
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	headerCopy := *header
 	return GenMan(cmd, &headerCopy, f)
@@ -125,7 +125,7 @@ func fillHeader(header *GenManHeader, name string) error {
 
 func manPreamble(buf io.StringWriter, header *GenManHeader, cmd *cobra.Command, dashedName string) {
 	description := cmd.Long
-	if len(description) == 0 {
+	if description == "" {
 		description = cmd.Short
 	}
 
@@ -143,16 +143,16 @@ func manPreamble(buf io.StringWriter, header *GenManHeader, cmd *cobra.Command, 
 
 func manPrintFlags(buf io.StringWriter, flags *pflag.FlagSet) {
 	flags.VisitAll(func(flag *pflag.Flag) {
-		if len(flag.Deprecated) > 0 || flag.Hidden {
+		if flag.Deprecated != "" || flag.Hidden {
 			return
 		}
 		format := ""
-		if len(flag.Shorthand) > 0 && len(flag.ShorthandDeprecated) == 0 {
+		if flag.Shorthand != "" && flag.ShorthandDeprecated == "" {
 			format = fmt.Sprintf("**-%s**, **--%s**", flag.Shorthand, flag.Name)
 		} else {
 			format = fmt.Sprintf("**--%s**", flag.Name)
 		}
-		if len(flag.NoOptDefVal) > 0 {
+		if flag.NoOptDefVal != "" {
 			format += "["
 		}
 		if flag.Value.Type() == "string" {
@@ -161,7 +161,7 @@ func manPrintFlags(buf io.StringWriter, flags *pflag.FlagSet) {
 		} else {
 			format += "=%s"
 		}
-		if len(flag.NoOptDefVal) > 0 {
+		if flag.NoOptDefVal != "" {
 			format += "]"
 		}
 		format += "\n\t%s\n\n"
@@ -195,9 +195,9 @@ func genMan(cmd *cobra.Command, header *GenManHeader) []byte {
 
 	manPreamble(buf, header, cmd, dashCommandName)
 	manPrintOptions(buf, cmd)
-	if len(cmd.Example) > 0 {
+	if cmd.Example != "" {
 		buf.WriteString("# EXAMPLE\n")
-		buf.WriteString(fmt.Sprintf("\n%s\n\n", cmd.Example))
+		fmt.Fprintf(buf, "\n%s\n\n", cmd.Example)
 	}
 	if hasSeeAlso(cmd) {
 		buf.WriteString("# SEE ALSO\n")

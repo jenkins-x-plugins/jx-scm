@@ -1,3 +1,4 @@
+// Package close provides the close pull request command.
 package close
 
 import (
@@ -36,7 +37,7 @@ var (
 	_ = termcolor.ColorInfo
 )
 
-// LabelOptions the options for the command
+// Options the options for the command
 type Options struct {
 	scmclient.Options
 
@@ -62,12 +63,12 @@ func NewCmdClosePullRequest() (*cobra.Command, *Options) {
 		Short:   "closes a pull request",
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			err := o.Run()
 			helper.CheckErr(err)
 		},
 	}
-	o.Options.AddFlags(cmd)
+	o.AddFlags(cmd)
 
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository that contains pull requests to close. Either an organisation or username. For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository that contains pull requests to close")

@@ -1,3 +1,4 @@
+// Package create provides the repository create command.
 package create
 
 import (
@@ -36,7 +37,7 @@ var (
 	info = termcolor.ColorInfo
 )
 
-// LabelOptions the options for the command
+// Options the options for the command
 type Options struct {
 	options.BaseOptions
 	scmclient.Options
@@ -62,7 +63,7 @@ func NewCmdCreateRepository() (*cobra.Command, *Options) {
 		Short:   "Creates a new git provider in a git server",
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			o.Args = args
 			err := o.Run()
 			helper.CheckErr(err)
@@ -78,8 +79,8 @@ func NewCmdCreateRepository() (*cobra.Command, *Options) {
 	cmd.Flags().BoolVarP(&o.Private, "private", "", false, "if the repository should be private")
 	cmd.Flags().BoolVarP(&o.Confirm, "confirm", "", false, "confirms creating the repository")
 
-	o.Options.AddFlags(cmd)
-	o.BaseOptions.AddBaseFlags(cmd)
+	o.AddFlags(cmd)
+	o.AddBaseFlags(cmd)
 	return cmd, o
 }
 
@@ -191,8 +192,8 @@ func (o *Options) createTemplate(template string) error {
 		log.Logger().Infof("switching to the git clone URL %s", info(cloneURL))
 	}
 
-	username := o.Options.Username
-	remoteURL, err := stringhelpers.URLSetUserPassword(cloneURL, username, o.Options.Token)
+	username := o.Username
+	remoteURL, err := stringhelpers.URLSetUserPassword(cloneURL, username, o.Token)
 	if err != nil {
 		return errors.Wrapf(err, "failed to create the remote git URL for %s and user %s", cloneURL, username)
 	}

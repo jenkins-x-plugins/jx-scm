@@ -1,3 +1,4 @@
+// Package cmd provides the root command and subcommands for jx-scm.
 package cmd
 
 import (
@@ -20,7 +21,7 @@ func Main() *cobra.Command {
 			cobra.CommandDisplayNameAnnotation: rootcmd.TopLevelCommand,
 		},
 		Short: "GitOps utility commands",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cobra.Command, _ []string) {
 			err := cmd.Help()
 			if err != nil {
 				log.Logger().Error(err.Error())

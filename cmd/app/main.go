@@ -1,5 +1,6 @@
 //go:build !windows
 
+// Package app provides the entry point for non-Windows platforms.
 package app
 
 import (

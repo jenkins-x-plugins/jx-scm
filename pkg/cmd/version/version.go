@@ -1,3 +1,4 @@
+// Package version provides the version command.
 package version
 
 import (
@@ -25,7 +26,7 @@ const (
 	TestVersion = "1.0.0-SNAPSHOT"
 )
 
-// ShowOptions the options for viewing running PRs
+// Options the options for viewing running PRs
 type Options struct {
 	Verbose bool
 }
@@ -37,7 +38,7 @@ func NewCmdVersion() (*cobra.Command, *Options) {
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Displays the version of this command",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			err := o.Run()
 			helper.CheckErr(err)
 		},
@@ -52,6 +53,7 @@ func (o *Options) Run() error {
 	return nil
 }
 
+// GetVersion returns the binary version string.
 func GetVersion() string {
 	if Version != "" {
 		return Version

@@ -1,3 +1,4 @@
+// Package clone provides the repository clone command.
 package clone
 
 import (
@@ -29,7 +30,7 @@ var (
 	info = termcolor.ColorInfo
 )
 
-// LabelOptions the options for the command
+// Options the options for the command
 type Options struct {
 	options.BaseOptions
 
@@ -48,18 +49,18 @@ func NewCmdCloneRepository() (*cobra.Command, *Options) {
 		Short:   "Clones a git repository",
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			o.Args = args
 			err := o.Run()
 			helper.CheckErr(err)
 		},
 	}
 
-	o.BaseOptions.AddBaseFlags(cmd)
+	o.AddBaseFlags(cmd)
 	return cmd, o
 }
 
-// Run transforms the YAML files
+// Validate validates the options
 func (o *Options) Validate() error {
 	err := o.BaseOptions.Validate()
 	if err != nil {
