@@ -3,7 +3,7 @@ module github.com/jenkins-x-plugins/jx-scm
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/jenkins-x/go-scm v1.15.31
-	github.com/jenkins-x/jx-helpers/v3 v3.11.1
+	github.com/jenkins-x/jx-helpers/v3 v3.11.3
 	github.com/jenkins-x/jx-logging/v3 v3.1.6
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.10.2
