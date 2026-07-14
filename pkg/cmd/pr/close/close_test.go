@@ -10,11 +10,11 @@ import (
 	"github.com/jenkins-x-plugins/jx-scm/pkg/cmd/pr/close"
 )
 
-func TestClosePullRequestByNumber(t *testing.T) {
+func TestClosePullRequestByNumber(_ *testing.T) {
 	// Needs testing
 }
 
-func TestClosePullRequestByBefore(t *testing.T) {
+func TestClosePullRequestByBefore(_ *testing.T) {
 	// Needs testing
 }
 

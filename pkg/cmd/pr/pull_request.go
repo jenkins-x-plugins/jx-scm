@@ -1,3 +1,4 @@
+// Package pr provides commands for working with pull requests.
 package pr
 
 import (
@@ -14,7 +15,7 @@ func NewCmdPullRequest() *cobra.Command {
 		Use:     "pull-request",
 		Short:   "Commands for working with pull-requests",
 		Aliases: []string{"pr"},
-		Run: func(command *cobra.Command, args []string) {
+		Run: func(command *cobra.Command, _ []string) {
 			err := command.Help()
 			if err != nil {
 				log.Logger().Error(err.Error())

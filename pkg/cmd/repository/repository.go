@@ -1,3 +1,4 @@
+// Package repository provides commands for working with source repositories.
 package repository
 
 import (
@@ -15,7 +16,7 @@ func NewCmdRepository() *cobra.Command {
 		Use:     "repository",
 		Short:   "Commands for working with source repositories",
 		Aliases: []string{"repo", "repos", "repositories"},
-		Run: func(command *cobra.Command, args []string) {
+		Run: func(command *cobra.Command, _ []string) {
 			err := command.Help()
 			if err != nil {
 				log.Logger().Error(err.Error())

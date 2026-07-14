@@ -1,3 +1,4 @@
+// Package update provides the release update command.
 package update
 
 import (
@@ -31,7 +32,7 @@ var (
 	_ = termcolor.ColorInfo
 )
 
-// LabelOptions the options for the command
+// Options the options for the command
 type Options struct {
 	scmclient.Options
 
@@ -53,12 +54,12 @@ func NewCmdUpdateRelease() (*cobra.Command, *Options) {
 		Short:   "Updates a release",
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			err := o.Run()
 			helper.CheckErr(err)
 		},
 	}
-	o.Options.AddFlags(cmd)
+	o.AddFlags(cmd)
 
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to update. Either an organisation or username.  For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository to update")
@@ -70,7 +71,7 @@ func NewCmdUpdateRelease() (*cobra.Command, *Options) {
 	return cmd, o
 }
 
-// Run transforms the YAML files
+// Validate validates the options and returns the ScmClient
 func (o *Options) Validate() (*scm.Client, error) {
 	scmClient, err := o.Options.Validate()
 	if err != nil {

@@ -1,3 +1,4 @@
+// Package release provides commands for working with releases.
 package release
 
 import (
@@ -13,7 +14,7 @@ func NewCmdRelease() *cobra.Command {
 		Use:     "release",
 		Short:   "Commands for working with releases",
 		Aliases: []string{"release"},
-		Run: func(command *cobra.Command, args []string) {
+		Run: func(command *cobra.Command, _ []string) {
 			err := command.Help()
 			if err != nil {
 				log.Logger().Error(err.Error())

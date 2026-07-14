@@ -1,3 +1,4 @@
+// Package create provides the create pull request command.
 package create
 
 import (
@@ -45,7 +46,7 @@ var (
 	_ = termcolor.ColorInfo
 )
 
-// LabelOptions the options for the command
+// Options the options for the command
 type Options struct {
 	scmclient.Options
 
@@ -71,12 +72,12 @@ func NewCmdCreatePullRequest() (*cobra.Command, *Options) {
 		Short:   "Creates a pull request",
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			err := o.Run()
 			helper.CheckErr(err)
 		},
 	}
-	o.Options.AddFlags(cmd)
+	o.AddFlags(cmd)
 
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository. Either an organisation or username. For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "r", "", "the name of the repository")
@@ -147,7 +148,7 @@ func (o *Options) Run() error {
 	return nil
 }
 
-func updateNecessary(ctx context.Context, head string, base string, updateAllowed bool, scmClient *scm.Client, fullName string) (bool, int) {
+func updateNecessary(ctx context.Context, head, base string, updateAllowed bool, scmClient *scm.Client, fullName string) (bool, int) {
 	if !updateAllowed {
 		return false, 0
 	}
@@ -155,7 +156,8 @@ func updateNecessary(ctx context.Context, head string, base string, updateAllowe
 	return FindOpenPullRequestByBranches(ctx, head, base, scmClient, fullName)
 }
 
-func FindOpenPullRequestByBranches(ctx context.Context, head string, base string, scmClient *scm.Client, fullName string) (bool, int) {
+// FindOpenPullRequestByBranches finds an open PR matching the given head and base branches.
+func FindOpenPullRequestByBranches(ctx context.Context, head, base string, scmClient *scm.Client, fullName string) (bool, int) {
 	var openPullRequests []*scm.PullRequest
 	page := 1
 

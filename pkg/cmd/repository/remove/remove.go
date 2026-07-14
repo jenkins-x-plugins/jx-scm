@@ -1,3 +1,4 @@
+// Package remove provides the repository remove command.
 package remove
 
 import (
@@ -40,7 +41,7 @@ var (
 	info = termcolor.ColorInfo
 )
 
-// LabelOptions the options for the command
+// Options the options for the command
 type Options struct {
 	scmhelpers.Factory
 
@@ -57,7 +58,7 @@ type Options struct {
 	CreatedBeforeTime *time.Time
 }
 
-// NewCmdCreateRepository creates a command object for the command
+// NewCmdRemoveRepository creates a command object for the command
 func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 	o := &Options{}
 
@@ -67,12 +68,12 @@ func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 		Aliases: []string{"delete", "rm"},
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName, rootcmd.BinaryName),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			err := o.Run()
 			helper.CheckErr(err)
 		},
 	}
-	o.Factory.AddFlags(cmd)
+	o.AddFlags(cmd)
 
 	cmd.Flags().StringVarP(&o.Owner, "owner", "o", "", "the owner of the repository to create. Either an organisation or username.  For Azure, include the project: 'organization/project'")
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "the name of the repository to create")
@@ -86,12 +87,12 @@ func NewCmdRemoveRepository() (*cobra.Command, *Options) {
 	return cmd, o
 }
 
-// Run transforms the YAML files
+// Validate validates the options and returns the ScmClient
 func (o *Options) Validate() (*scm.Client, error) {
-	if o.Factory.GitServerURL == "" {
-		o.Factory.GitServerURL = giturl.GitHubURL
+	if o.GitServerURL == "" {
+		o.GitServerURL = giturl.GitHubURL
 	}
-	scmClient, err := o.Factory.Create()
+	scmClient, err := o.Create()
 	if err != nil {
 		return scmClient, errors.Wrapf(err, "failed to create SCM client")
 	}

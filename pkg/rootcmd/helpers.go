@@ -1,3 +1,4 @@
+// Package rootcmd provides shared binary name and top-level command variables.
 package rootcmd
 
 import (

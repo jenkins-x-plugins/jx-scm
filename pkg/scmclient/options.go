@@ -1,3 +1,4 @@
+// Package scmclient provides common SCM client options and helpers.
 package scmclient
 
 import (
@@ -26,6 +27,7 @@ type Options struct {
 	GitCommandRunner cmdrunner.CommandRunner
 }
 
+// AddFlags adds common SCM flags to the given command.
 func (o *Options) AddFlags(cmd *cobra.Command) {
 	cmd.Flags().StringVarP(&o.Kind, "kind", "k", "", "the kind of git server to use")
 	cmd.Flags().StringVarP(&o.Server, "server", "s", "", "the git server URL to use")
